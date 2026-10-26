@@ -26,9 +26,9 @@ export default function LoginPage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <p className="text-xs font-medium tracking-widest text-neutral-400 uppercase mb-1">
-            Indian Institute of Information Technology
+            Indian Institute of Information Technology Dharwad
           </p>
-          <h1 className="text-2xl font-semibold text-neutral-900">Dharwad</h1>
+          <h1 className="text-2xl font-semibold text-neutral-900">Technical Committee</h1>
           <p className="mt-1 text-sm text-neutral-500">Club Registry</p>
         </div>
 

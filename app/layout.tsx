@@ -8,7 +8,7 @@ const geist = Geist({
 })
 
 export const metadata: Metadata = {
-  title: 'IIIT Dharwad Club Registry',
+  title: 'IIITDWD Club Registry',
   description: 'Track and manage club memberships at IIIT Dharwad',
 }
 

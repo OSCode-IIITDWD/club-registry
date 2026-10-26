@@ -6,7 +6,7 @@ export const CLUBS = [
   'DSAI Society',
   'E-Cell',
   'GDG',
-  'GND_0 VLSI CLUB IIIT DHARWAD',
+  'GND_0 VLSI CLUB',
   'IEEE Student Branch & Computer Society',
   'InQuizitive',
   'IRIS',
