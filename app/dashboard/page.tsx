@@ -45,14 +45,24 @@ export default async function DashboardPage() {
             <p className="text-xs text-neutral-400 font-medium tracking-wide uppercase">IIIT Dharwad</p>
             <h1 className="text-base font-semibold text-neutral-900">Club Registry</h1>
           </div>
-          <form action={logout}>
-            <button
-              type="submit"
-              className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
-            >
-              Sign out
-            </button>
-          </form>
+          <div className="flex items-center gap-4">
+            {userInfo.admin && (
+              <Link
+                href="/stats"
+                className="text-sm text-neutral-500 hover:text-neutral-900 border border-neutral-200 rounded-lg px-3 py-1.5 transition-colors"
+              >
+                View stats
+              </Link>
+            )}
+            <form action={logout}>
+              <button
+                type="submit"
+                className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
+              >
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
       </header>
 

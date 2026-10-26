@@ -42,18 +42,15 @@ export async function updateProfile(_prevState: ActionState, formData: FormData)
 
   if (!user) redirect('/login')
 
-  const full_name = (formData.get('full_name') as string).trim()
-  const roll = formData.get('roll') as string
-  const batch = Number(formData.get('batch'))
-  const discipline = formData.get('discipline') as string
+  const full_name = ((formData.get('full_name') as string) ?? '').trim()
 
-  if (!roll || !discipline) {
-    return { error: 'Roll number and discipline are required.' }
+  if (!full_name) {
+    return { error: 'Please enter your name.' }
   }
 
   const { error } = await supabase
     .from('user_info')
-    .update({ full_name: full_name || null, roll, batch, discipline })
+    .update({ full_name })
     .eq('id', user.id)
 
   if (error) {

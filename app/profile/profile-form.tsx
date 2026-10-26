@@ -5,8 +5,6 @@ import { updateProfile } from '@/app/actions/profile'
 
 type ActionState = { error?: string } | undefined
 
-const DISCIPLINES = ['CSE', 'DSAI', 'ECE', 'AIC']
-
 interface UserInfo {
   full_name: string | null
   roll: string
@@ -27,57 +25,30 @@ export default function ProfileForm({ userInfo }: { userInfo: UserInfo }) {
           id="full_name"
           name="full_name"
           type="text"
+          required
           defaultValue={userInfo.full_name ?? ''}
           placeholder="Ravi Kumar"
           className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm text-neutral-900 outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
         />
       </div>
 
-      <div>
-        <label htmlFor="roll" className="block text-sm font-medium text-neutral-700 mb-1">
-          Roll Number <span className="text-red-500">*</span>
-        </label>
-        <input
-          id="roll"
-          name="roll"
-          type="text"
-          required
-          defaultValue={userInfo.roll}
-          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm text-neutral-900 outline-none focus:border-neutral-400 transition-colors"
-        />
+      <div className="grid grid-cols-3 gap-4 pt-4 border-t border-neutral-100">
+        <div>
+          <p className="text-xs text-neutral-400 mb-0.5">Roll No.</p>
+          <p className="text-sm font-medium text-neutral-800">{userInfo.roll.toUpperCase()}</p>
+        </div>
+        <div>
+          <p className="text-xs text-neutral-400 mb-0.5">Discipline</p>
+          <p className="text-sm font-medium text-neutral-800">{userInfo.discipline}</p>
+        </div>
+        <div>
+          <p className="text-xs text-neutral-400 mb-0.5">Batch</p>
+          <p className="text-sm font-medium text-neutral-800">{userInfo.batch ?? '—'}</p>
+        </div>
       </div>
-
-      <div>
-        <label htmlFor="batch" className="block text-sm font-medium text-neutral-700 mb-1">
-          Batch Year
-        </label>
-        <input
-          id="batch"
-          name="batch"
-          type="number"
-          min={2018}
-          max={2030}
-          defaultValue={userInfo.batch ?? ''}
-          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm text-neutral-900 outline-none focus:border-neutral-400 transition-colors"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="discipline" className="block text-sm font-medium text-neutral-700 mb-1">
-          Discipline <span className="text-red-500">*</span>
-        </label>
-        <select
-          id="discipline"
-          name="discipline"
-          required
-          defaultValue={userInfo.discipline}
-          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm text-neutral-900 outline-none focus:border-neutral-400 transition-colors bg-white text-neutral-900"
-        >
-          {DISCIPLINES.map((d) => (
-            <option key={d} value={d}>{d}</option>
-          ))}
-        </select>
-      </div>
+      <p className="text-xs text-neutral-400">
+        Roll number, discipline, and batch are derived from your college email and can't be edited.
+      </p>
 
       {state?.error && (
         <p className="text-sm text-red-600">{state.error}</p>
