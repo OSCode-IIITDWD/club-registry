@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { logout } from '@/app/actions/auth'
+import { removeMembership } from '@/app/actions/clubs'
 
 export const instant = false
 
@@ -23,11 +24,11 @@ export default async function DashboardPage() {
     redirect('/onboarding')
   }
 
-  const { data: membership } = await supabase
+  const { data: memberships } = await supabase
     .from('committee_memberships')
     .select('*')
     .eq('user', user.id)
-    .single()
+    .order('from', { ascending: false })
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -90,51 +91,39 @@ export default async function DashboardPage() {
               href="/clubs"
               className="text-sm text-neutral-500 hover:text-neutral-900 border border-neutral-200 rounded-lg px-3 py-1.5 transition-colors"
             >
-              {membership ? 'Edit' : 'Add'}
+              Add club
             </Link>
           </div>
 
-          {!membership ? (
+          {!memberships || memberships.length === 0 ? (
             <p className="text-sm text-neutral-400">
               No memberships recorded yet.{' '}
               <Link href="/clubs" className="text-neutral-600 underline underline-offset-2">
-                Add your clubs
+                Add your first club
               </Link>
             </p>
           ) : (
-            <div className="space-y-3">
-              {/* Clubs */}
-              {membership.clubs && membership.clubs.length > 0 && (
-                <div>
-                  <p className="text-xs text-neutral-400 mb-2">Clubs</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {membership.clubs.map((club: string) => (
-                      <span
-                        key={club}
-                        className="px-2.5 py-0.5 bg-neutral-100 text-neutral-700 text-xs rounded-full"
-                      >
-                        {club}
-                      </span>
-                    ))}
+            <ul className="divide-y divide-neutral-100">
+              {memberships.map((m) => (
+                <li key={m.id} className="py-3 first:pt-0 last:pb-0 flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-medium text-neutral-900">{m.club}</p>
+                    <p className="text-xs text-neutral-500 mt-0.5">
+                      {m.role || '—'} · {m.from ?? '—'} – {m.to ?? 'Present'}
+                    </p>
                   </div>
-                </div>
-              )}
-              {/* Role / Years */}
-              <div className="grid grid-cols-3 gap-4 pt-3 border-t border-neutral-100">
-                <div>
-                  <p className="text-xs text-neutral-400 mb-0.5">Role</p>
-                  <p className="text-sm font-medium text-neutral-800">{membership.role || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-400 mb-0.5">From</p>
-                  <p className="text-sm font-medium text-neutral-800">{membership.from ?? '—'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-400 mb-0.5">To</p>
-                  <p className="text-sm font-medium text-neutral-800">{membership.to ?? '—'}</p>
-                </div>
-              </div>
-            </div>
+                  <form action={removeMembership}>
+                    <input type="hidden" name="id" value={m.id} />
+                    <button
+                      type="submit"
+                      className="text-xs text-neutral-400 hover:text-red-600 transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </form>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </main>

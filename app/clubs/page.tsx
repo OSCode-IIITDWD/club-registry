@@ -1,48 +1,35 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { CLUBS } from '@/lib/utils/clubs'
 import ClubsForm from './clubs-form'
-
-export const instant = false
 
 export default async function ClubsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
-  if (!user) {
-    redirect('/login')
-  }
-
-  const { data: userInfo } = await supabase
-    .from('user_info')
-    .select('id')
-    .eq('id', user.id)
-    .single()
-
-  if (!userInfo) {
-    redirect('/onboarding')
-  }
-
-  const { data: membership } = await supabase
+  const { data: existing } = await supabase
     .from('committee_memberships')
-    .select('*')
+    .select('club')
     .eq('user', user.id)
-    .single()
+
+  const taken = new Set((existing ?? []).map((m) => m.club))
+  const available = CLUBS.filter((c) => !taken.has(c))
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      <header className="bg-white border-b border-neutral-200">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-base font-semibold text-neutral-900">Club Memberships</h1>
-          <Link href="/dashboard" className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors">
-            ← Back
-          </Link>
-        </div>
-      </header>
-
-      <main className="max-w-2xl mx-auto px-4 py-8">
-        <div className="bg-white border border-neutral-200 rounded-xl p-6 shadow-sm">
-          <ClubsForm membership={membership} />
+      <main className="max-w-md mx-auto px-4 py-10">
+        <Link href="/dashboard" className="text-sm text-neutral-500 hover:text-neutral-900">
+          ← Back
+        </Link>
+        <h1 className="text-lg font-semibold text-neutral-900 mt-4 mb-6">Add a club</h1>
+        <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm">
+          {available.length === 0 ? (
+            <p className="text-sm text-neutral-500">You've already added every club.</p>
+          ) : (
+            <ClubsForm clubs={available} />
+          )}
         </div>
       </main>
     </div>

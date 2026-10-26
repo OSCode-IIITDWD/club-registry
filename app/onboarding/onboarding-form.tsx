@@ -5,8 +5,6 @@ import { saveOnboarding } from '@/app/actions/profile'
 
 type ActionState = { error?: string } | undefined
 
-const DISCIPLINES = ['CSE', 'DSAI', 'ECE', 'CSAI']
-
 export default function OnboardingForm() {
   const [state, action, pending] = useActionState(saveOnboarding, undefined as ActionState)
 
@@ -20,55 +18,11 @@ export default function OnboardingForm() {
           id="full_name"
           name="full_name"
           type="text"
+          required
+          autoFocus
           placeholder="Ravi Kumar"
-          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
+          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm text-neutral-900 outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
         />
-      </div>
-
-      <div>
-        <label htmlFor="roll" className="block text-sm font-medium text-neutral-700 mb-1">
-          Roll Number <span className="text-red-500">*</span>
-        </label>
-        <input
-          id="roll"
-          name="roll"
-          type="text"
-          required
-          placeholder="22BCS001"
-          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="batch" className="block text-sm font-medium text-neutral-700 mb-1">
-          Batch Year
-        </label>
-        <input
-          id="batch"
-          name="batch"
-          type="number"
-          placeholder="2022"
-          min={2018}
-          max={2030}
-          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="discipline" className="block text-sm font-medium text-neutral-700 mb-1">
-          Discipline <span className="text-red-500">*</span>
-        </label>
-        <select
-          id="discipline"
-          name="discipline"
-          required
-          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors bg-white text-neutral-900"
-        >
-          <option value="">Select discipline</option>
-          {DISCIPLINES.map((d) => (
-            <option key={d} value={d}>{d}</option>
-          ))}
-        </select>
       </div>
 
       {state?.error && (

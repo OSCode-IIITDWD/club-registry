@@ -1,16 +1,24 @@
 'use client'
 
 import { useActionState, useState } from 'react'
-import { login, signup } from '@/app/actions/auth'
+import { login, verifyOtp } from '@/app/actions/auth'
 
-type ActionState = { error?: string } | undefined
+type LoginState =
+  | { step: 'otp'; email: string; error?: string }
+  | { step?: never; error?: string }
+  | undefined
 
-const initialState: ActionState = undefined
+type OtpState = { error?: string } | undefined
 
 export default function LoginPage() {
-  const [tab, setTab] = useState<'signin' | 'signup'>('signin')
-  const [loginState, loginAction, loginPending] = useActionState(login, initialState)
-  const [signupState, signupAction, signupPending] = useActionState(signup, initialState)
+  const [loginState, loginAction, loginPending] = useActionState(login, undefined as LoginState)
+  const [otpState, otpAction, otpPending] = useActionState(verifyOtp, undefined as OtpState)
+  const [manualEmail, setManualEmail] = useState<string | null>(null)
+
+  // The email we're working with in step 2
+  const activeEmail = loginState?.step === 'otp' ? loginState.email : manualEmail
+
+  const isOtpStep = loginState?.step === 'otp'
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
@@ -24,115 +32,111 @@ export default function LoginPage() {
           <p className="mt-1 text-sm text-neutral-500">Club Registry</p>
         </div>
 
-        {/* Card */}
         <div className="border border-neutral-200 rounded-xl p-6 bg-white shadow-sm">
-          {/* Tabs */}
-          <div className="flex border border-neutral-200 rounded-lg p-0.5 mb-6">
-            <button
-              onClick={() => setTab('signin')}
-              className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                tab === 'signin'
-                  ? 'bg-neutral-900 text-white'
-                  : 'text-neutral-500 hover:text-neutral-700'
-              }`}
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => setTab('signup')}
-              className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                tab === 'signup'
-                  ? 'bg-neutral-900 text-white'
-                  : 'text-neutral-500 hover:text-neutral-700'
-              }`}
-            >
-              Sign Up
-            </button>
-          </div>
 
-          {/* Sign In Form */}
-          {tab === 'signin' && (
+          {!isOtpStep ? (
+            /* ── Step 1: Email input ── */
             <form action={loginAction} className="space-y-4">
               <div>
-                <label htmlFor="login-email" className="block text-sm font-medium text-neutral-700 mb-1">
-                  Email
+                <label
+                  htmlFor="emailLocal"
+                  className="block text-sm font-medium text-neutral-700 mb-1"
+                >
+                  College Email
                 </label>
-                <input
-                  id="login-email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="you@iiitdwd.ac.in"
-                  className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
-                />
+                <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:border-neutral-400 transition-colors">
+                  <input
+                    id="emailLocal"
+                    name="emailLocal"
+                    type="text"
+                    required
+                    autoComplete="username"
+                    placeholder="26bcs001"
+                    className="flex-1 px-3 py-2 text-sm text-neutral-900 outline-none placeholder:text-neutral-300 bg-white min-w-0"
+                  />
+                  <span className="px-3 py-2 text-sm text-neutral-400 bg-neutral-50 border-l border-neutral-200 whitespace-nowrap select-none">
+                    @iiitdwd.ac.in
+                  </span>
+                </div>
               </div>
-              <div>
-                <label htmlFor="login-password" className="block text-sm font-medium text-neutral-700 mb-1">
-                  Password
-                </label>
-                <input
-                  id="login-password"
-                  name="password"
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
-                />
-              </div>
+
               {loginState?.error && (
                 <p className="text-sm text-red-600">{loginState.error}</p>
               )}
+
               <button
                 type="submit"
                 disabled={loginPending}
                 className="w-full py-2 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-neutral-700 transition-colors disabled:opacity-50"
               >
-                {loginPending ? 'Signing in…' : 'Sign In'}
+                {loginPending ? 'Sending…' : 'Send Code'}
               </button>
             </form>
-          )}
 
-          {/* Sign Up Form */}
-          {tab === 'signup' && (
-            <form action={signupAction} className="space-y-4">
-              <div>
-                <label htmlFor="signup-email" className="block text-sm font-medium text-neutral-700 mb-1">
-                  Email
-                </label>
-                <input
-                  id="signup-email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="you@iiitdwd.ac.in"
-                  className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
-                />
-                <p className="mt-1 text-xs text-neutral-400">Only @iiitdwd.ac.in addresses allowed</p>
+          ) : (
+            /* ── Step 2: OTP + magic link info ── */
+            <div className="space-y-5">
+              <div className="text-center space-y-1">
+                <p className="text-sm font-medium text-neutral-800">Check your email</p>
+                <p className="text-xs text-neutral-500 break-all">{activeEmail}</p>
               </div>
-              <div>
-                <label htmlFor="signup-password" className="block text-sm font-medium text-neutral-700 mb-1">
-                  Password
-                </label>
-                <input
-                  id="signup-password"
-                  name="password"
-                  type="password"
-                  required
-                  placeholder="Min. 6 characters"
-                  className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
-                />
+
+              {/* OTP entry */}
+              <form action={otpAction} className="space-y-4">
+                <input type="hidden" name="email" value={activeEmail ?? ''} />
+                <div>
+                  <label
+                    htmlFor="token"
+                    className="block text-sm font-medium text-neutral-700 mb-1"
+                  >
+                    Enter 6-digit code
+                  </label>
+                  <input
+                    id="token"
+                    name="token"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    required
+                    autoComplete="one-time-code"
+                    placeholder="123456"
+                    className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm text-neutral-900 outline-none focus:border-neutral-400 transition-colors tracking-widest placeholder:text-neutral-300 placeholder:tracking-normal text-center"
+                  />
+                </div>
+
+                {otpState?.error && (
+                  <p className="text-sm text-red-600">{otpState.error}</p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={otpPending}
+                  className="w-full py-2 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-neutral-700 transition-colors disabled:opacity-50"
+                >
+                  {otpPending ? 'Verifying…' : 'Verify Code'}
+                </button>
+              </form>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1 h-px bg-neutral-100" />
+                <span className="text-xs text-neutral-400">or</span>
+                <div className="flex-1 h-px bg-neutral-100" />
               </div>
-              {signupState?.error && (
-                <p className="text-sm text-red-600">{signupState.error}</p>
-              )}
+
+              <p className="text-center text-xs text-neutral-500">
+                Click the <span className="font-medium text-neutral-700">magic link</span> in your email to sign in directly.
+              </p>
+
+              {/* Back */}
               <button
-                type="submit"
-                disabled={signupPending}
-                className="w-full py-2 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-neutral-700 transition-colors disabled:opacity-50"
+                type="button"
+                onClick={() => window.location.reload()}
+                className="w-full text-xs text-neutral-400 hover:text-neutral-600 transition-colors pt-1"
               >
-                {signupPending ? 'Creating account…' : 'Create Account'}
+                ← Use a different email
               </button>
-            </form>
+            </div>
           )}
         </div>
       </div>

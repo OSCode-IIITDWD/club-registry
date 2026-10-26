@@ -5,7 +5,7 @@ import { updateProfile } from '@/app/actions/profile'
 
 type ActionState = { error?: string } | undefined
 
-const DISCIPLINES = ['CSE', 'DSAI', 'ECE', 'CSAI']
+const DISCIPLINES = ['CSE', 'DSAI', 'ECE', 'AIC']
 
 interface UserInfo {
   full_name: string | null
@@ -29,7 +29,7 @@ export default function ProfileForm({ userInfo }: { userInfo: UserInfo }) {
           type="text"
           defaultValue={userInfo.full_name ?? ''}
           placeholder="Ravi Kumar"
-          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
+          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm text-neutral-900 outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
         />
       </div>
 
@@ -43,7 +43,7 @@ export default function ProfileForm({ userInfo }: { userInfo: UserInfo }) {
           type="text"
           required
           defaultValue={userInfo.roll}
-          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors"
+          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm text-neutral-900 outline-none focus:border-neutral-400 transition-colors"
         />
       </div>
 
@@ -58,7 +58,7 @@ export default function ProfileForm({ userInfo }: { userInfo: UserInfo }) {
           min={2018}
           max={2030}
           defaultValue={userInfo.batch ?? ''}
-          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors"
+          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm text-neutral-900 outline-none focus:border-neutral-400 transition-colors"
         />
       </div>
 
@@ -71,7 +71,7 @@ export default function ProfileForm({ userInfo }: { userInfo: UserInfo }) {
           name="discipline"
           required
           defaultValue={userInfo.discipline}
-          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm outline-none focus:border-neutral-400 transition-colors bg-white text-neutral-900"
+          className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm text-neutral-900 outline-none focus:border-neutral-400 transition-colors bg-white text-neutral-900"
         >
           {DISCIPLINES.map((d) => (
             <option key={d} value={d}>{d}</option>
