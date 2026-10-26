@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { CLUBS } from '@/lib/utils/clubs'
 import ClubsForm from './clubs-form'
 
+export const instant = false
+
 export default async function ClubsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
