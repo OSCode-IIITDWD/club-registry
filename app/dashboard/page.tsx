@@ -1,12 +1,16 @@
+import { connection } from 'next/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { logout } from '@/app/actions/auth'
 import { removeMembership } from '@/app/actions/clubs'
+import { MAX_CLUBS } from '@/lib/utils/clubs'
 
 export const instant = false
 
 export default async function DashboardPage() {
+  await connection()
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -30,6 +34,8 @@ export default async function DashboardPage() {
     .eq('user', user.id)
     .order('from', { ascending: false })
 
+  const overLimit = (memberships?.length ?? 0) > MAX_CLUBS
+
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* Header */}
@@ -51,6 +57,19 @@ export default async function DashboardPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8 space-y-4">
+        {overLimit && (
+          <div
+            role="alert"
+            className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-xl px-4 py-3"
+          >
+            <p className="font-medium">Club limit exceeded</p>
+            <p className="mt-0.5">
+              Up to {MAX_CLUBS} clubs are allowed. You currently have {memberships!.length}.
+              Please remove {memberships!.length - MAX_CLUBS} to stay within the limit.
+            </p>
+          </div>
+        )}
+
         {/* Profile card */}
         <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm">
           <div className="flex items-start justify-between mb-4">
