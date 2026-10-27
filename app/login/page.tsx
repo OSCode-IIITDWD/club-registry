@@ -51,7 +51,7 @@ export default function LoginPage() {
                     type="text"
                     required
                     autoComplete="username"
-                    placeholder="26bcs001"
+                    placeholder="24BDS051"
                     className="flex-1 px-3 py-2 text-sm text-neutral-900 outline-none placeholder:text-neutral-300 bg-white min-w-0"
                   />
                   <span className="px-3 py-2 text-sm text-neutral-400 bg-neutral-50 border-l border-neutral-200 whitespace-nowrap select-none">

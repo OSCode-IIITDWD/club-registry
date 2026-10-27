@@ -20,7 +20,7 @@ export default function OnboardingForm() {
           type="text"
           required
           autoFocus
-          placeholder="Ravi Kumar"
+          placeholder="Rohan Das"
           className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm text-neutral-900 outline-none focus:border-neutral-400 transition-colors placeholder:text-neutral-300"
         />
       </div>
